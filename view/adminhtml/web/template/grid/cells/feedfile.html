@@ -1,0 +1,25 @@
+<!-- ko if: checkFileLink($row()) -->
+<div class="feed-file-container">
+    <a class="feed-link"
+       target="_blank"
+       data-bind="
+           attr: { href: $row().feed_file_url },
+           text: $row().full_file_name
+       "></a>
+    <!-- ko if: checkFilePublicLink($row()) -->
+    <button class="copy-feed-url"
+            data-bind="
+                attr: { 'data-url': $row().feed_file_link },
+                click: function() { $data.copyToClipboard($row().feed_file_link) }
+            ">
+        <span class="admin__action-multiselect-crumb">
+            <i class="admin__action-multiselect-crumb-icon">Copy Feed Url</i>
+            <i class="admin__action-multiselect-crumb-icon-download"></i>
+        </span>
+    </button>
+    <!-- /ko -->
+</div>
+<!-- /ko -->
+<!-- ko ifnot: checkFileLink($row()) -->
+<span>File not yet generated</span>
+<!-- /ko -->

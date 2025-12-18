@@ -1,0 +1,10 @@
+<?php
+/**
+ * Template for feed generation URL
+ *
+ * @var \WeltPixel\ProductFeed\Block\Adminhtml\Feed\GenerateUrl $block
+ */
+?>
+<script>
+    window.weltpixelFeedGenerateUrl = '<?= $block->escapeJs($block->getGenerateUrl()) ?>';
+</script> 

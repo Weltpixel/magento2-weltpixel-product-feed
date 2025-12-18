@@ -1,0 +1,18 @@
+{
+    "name": "weltpixel/magento2-weltpixel-product-feed",
+    "description": "WeltPixel ProductFeed Module",
+    "require": {
+        "magento/module-catalog": "*"
+    },
+    "type": "magento2-module",
+    "version": "1.15.11",
+    "license": "MIT",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "WeltPixel\\ProductFeed\\": ""
+        }
+    }
+}

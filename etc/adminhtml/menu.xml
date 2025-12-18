@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+                id="WeltPixel_ProductFeed::ProductFeed_Label"
+                title="Product Feed"
+                module="WeltPixel_ProductFeed"
+                sortOrder="210"
+                parent="WeltPixel_Backend::WeltPixel"
+                resource="WeltPixel_ProductFeed::ProductFeed_Label"
+        />
+        <add
+                id="WeltPixel_ProductFeed::ProductFeedSettings"
+                title="General Settings"
+                module="WeltPixel_ProductFeed"
+                action="adminhtml/system_config/edit/section/weltpixel_productfeed/"
+                sortOrder="5"
+                parent="WeltPixel_ProductFeed::ProductFeed_Label"
+                resource="WeltPixel_ProductFeed::ProductFeedSettings"
+        />
+        <add
+                id="WeltPixel_ProductFeed::ProductFeeds"
+                title="Manage Feeds"
+                module="WeltPixel_ProductFeed"
+                action="weltpixelproductfeed/productfeed"
+                sortOrder="10"
+                parent="WeltPixel_ProductFeed::ProductFeed_Label"
+                resource="WeltPixel_ProductFeed::ProductFeeds"
+        />
+    </menu>
+</config>

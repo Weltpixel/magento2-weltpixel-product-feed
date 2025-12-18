@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="weltpixel_productfeed" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Product Feed</label>
+            <tab>weltpixel</tab>
+            <resource>WeltPixel_ProductFeed::ProductFeedSettings</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Product Feed</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable/Disable the extension.</comment>
+                </field>
+                <field id="batch_size" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Batch Size</label>
+                    <validate>validate-number</validate>
+                    <depends>
+                        <field id="enable">1</field>
+                    </depends>
+                    <comment>Choose the size of the batches of products added to the feed at once. Reducing this number will result in lower strain on the server, but will increase the feed generation time.</comment>
+                </field>
+                <field id="image_path" translate="label"  type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Image Path</label>
+                    <source_model>WeltPixel\ProductFeed\Model\Config\Source\ImagePath</source_model>
+                    <depends>
+                        <field id="enable">1</field>
+                    </depends>
+                    <comment>Choose the path to the product image you want to include in the feed. Choices are between the full path and the cached path. In certain cases, the cached path may not be recognized by the platform you're uploading the feed to, so it's recommended you send the full path.</comment>
+                </field>
+
+            </group>
+        </section>
+    </system>
+</config>

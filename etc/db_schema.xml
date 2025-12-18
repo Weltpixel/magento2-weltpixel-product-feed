@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="weltpixel_productfeed" resource="default" engine="innodb" comment="WeltPixel Product Feed">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Feed Id"/>
+        <column xsi:type="varchar" name="template_type" nullable="false" length="255" comment="Template Type"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Feed Name"/>
+        <column xsi:type="varchar" name="file_name" nullable="false" length="255" comment="File Name"/>
+        <column xsi:type="varchar" name="file_type" nullable="false" length="10" comment="File Type"/>
+        <column xsi:type="int" name="store_id" padding="10" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Store id"/>
+        <column xsi:type="tinyint" name="status" padding="2" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Status"/>
+        <column xsi:type="tinyint" name="exclude_disabled_products" padding="2" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Exclude Disabled Products"/>
+        <column xsi:type="tinyint" name="exclude_out_of_stock_products" padding="2" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Exclude Out Of Products"/>
+        <column xsi:type="tinyint" name="exclude_not_visible_products" padding="2" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Exclude Not Visible Products"/>
+        <column xsi:type="mediumtext" name="content_mappings" nullable="true" comment="Content Mappings"/>
+        <column xsi:type="mediumtext" name="conditions_serialized" nullable="true" comment="Conditions"/>
+        <column xsi:type="varchar" name="feed_execution_mode" nullable="false" length="32" comment="Feed Execution Mode"/>
+        <column xsi:type="varchar" name="feed_cron_day" nullable="false" length="255" comment="Feed Cron Day"/>
+        <column xsi:type="varchar" name="feed_cron_time" nullable="false" length="255" comment="Feed Cron Time"/>
+        <column xsi:type="varchar" name="feed_utm_source" nullable="false" length="255" comment="Feed Utm Source"/>
+        <column xsi:type="varchar" name="feed_utm_medium" nullable="false" length="255" comment="Feed Utm Medium"/>
+        <column xsi:type="varchar" name="feed_utm_term" nullable="false" length="255" comment="Feed Utm Term"/>
+        <column xsi:type="varchar" name="feed_utm_content" nullable="false" length="255" comment="Feed Utm Content"/>
+        <column xsi:type="varchar" name="feed_utm_campaign" nullable="false" length="255" comment="Feed Utm Campaign"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+    <table name="weltpixel_productfeed_google_product_category" resource="default" engine="innodb" comment="Google Product Category Table">
+        <column xsi:type="int" name="entity_id" nullable="false" identity="true" unsigned="true" comment="Entity ID"/>
+        <column xsi:type="int" name="category_id" nullable="false" comment="Category ID"/>
+        <column xsi:type="varchar" name="category_name" nullable="false" length="350" comment="Category Name"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+    </table>
+</schema>

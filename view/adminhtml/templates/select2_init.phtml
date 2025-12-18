@@ -1,0 +1,33 @@
+<script>
+    requirejs([
+        'jquery',
+        'select2'
+    ], function ($) {
+        'use strict';
+
+        $(document).ready(function () {
+            if (typeof MutationObserver !== 'undefined') {
+                var observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        if (mutation.addedNodes.length) {
+                            $(mutation.addedNodes).each(function () {
+                                if ($(this).find('select[name="product[wpx_feed_google_product_category]"]').length) {
+                                    observer.disconnect();
+                                    $('select[name="product[wpx_feed_google_product_category]"]').select2({
+                                        placeholder: "Please select a category"
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        });
+    });
+
+</script>

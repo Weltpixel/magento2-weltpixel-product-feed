@@ -1,0 +1,195 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**@var \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+/** @var $_helper \WeltPixel\ProductFeed\Helper\GoogleFeedHelper */
+$_helper = $this->helper('WeltPixel\ProductFeed\Helper\GoogleFeedHelper');
+?>
+<?php $_element = $block->getElement();
+$magentoAttributes = $_element->getMagentoAttributes();
+$googleFeedAttributes = $_element->getGoogleAttributes();
+$magentoAttributesSelectOptions = $_helper->generateSelectOptionsFromArrayAttributes($magentoAttributes);
+$googleAttributesSelectOptions = $_helper->generateSelectOptionsFromArrayAttributes($googleFeedAttributes);
+
+$formData = $_element->getData('form_data');
+$contentMappingsSerialized = $formData['content_mappings'] ?? false;
+if (!$contentMappingsSerialized) {
+    $contentMappingsSerialized = '[]';
+}
+$contentMappings = json_decode($contentMappingsSerialized, true);
+$requiredGoogleAttributes = $_helper->getRequiredGoogleAttributes();
+
+?>
+<?php $_jsObjectName = $block->getFieldSetId() != null ? $block->getFieldSetId() : $_element->getHtmlId() ?>
+<div class="content-mappings-container">
+    <fieldset id="<?= $block->escapeHtmlAttr($_jsObjectName) ?>" <?= /* @noEscape */ $_element->serialize(['class']) ?>
+              class="fieldset">
+        <div class="feed-mapping-wrapper">
+            <p>
+                This section handles the mapping of your store's attributes to the Template type you selected. A number of attributes will be pre-configured with their corresponding Magento attributes. You can choose to remap, add or remove attributes as required. Note that removals are not available for attributes that are marked as required by the platform you're generating the feed for. If an attribute is set to Empty, you'll need to select an attribute on your store that corresponds to the required value, or use the Manual option and input a value of your choice.
+            </p>
+        <legend class="legend"><span><?= $block->escapeHtml($_element->getLegend()) ?></span></legend>
+        </div>
+        <div class="mappings-wrapper">
+            <table class="admin__control-table" id="weltpixel_productfeed_contentmappings_table">
+                <thead>
+                <tr>
+                    <th><?= $block->escapeHtml(__("Google Attribute")) ?></th>
+                    <th><?= $block->escapeHtml(__("Magento Attribute")) ?></th>
+                    <th><?= $block->escapeHtml(__("Own Value")) ?></th>
+                    <th class="col-actions" colspan="1"><?= $block->escapeHtml(__("Action")) ?></th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <td colspan="4" class="col-actions-add">
+                        <button id="content_mapping_add_btn" class="action-add" title="Add" type="button">
+                            <span>Add Mapping</span>
+                        </button>
+                    </td>
+                </tr>
+                </tfoot>
+                <tbody>
+                        <?php foreach ($contentMappings as $contentMapping) : ?>
+                        <?php
+                        $isRequired = in_array($contentMapping['google_attribute'], $requiredGoogleAttributes);
+                        ?>
+                        <tr class="<?= /* @noEscape */ $isRequired ? 'required-mapping' : '' ?>">
+                            <td>
+                                <select name="contentMappings[google_attribute]" class="required-entry admin__control-text">
+                                    <?php /* @noEscape */ echo $_helper->markSelectedOptions($googleAttributesSelectOptions, $contentMapping['google_attribute'] ); ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="contentMappings[magento_attribute]" class="required-entry admin__control-text" >
+                                    <?php /* @noEscape */ echo $_helper->markSelectedOptions($magentoAttributesSelectOptions, $contentMapping['magento_attribute'] ); ?>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" name="contentMappings[own_value]" value="<?= /* @noEscape */ $contentMapping['own_value'] ?>" class="required-entry admin__control-text" >
+                            </td>
+                            <td class="col-actions">
+                                <?php if (!$isRequired): ?>
+                                    <button class="action-delete" type="button"><span>Delete</span></button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+
+                        <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+</div>
+<script>
+    require([
+        'jquery',
+        'prototype'
+    ], function($) {
+        let googleAttributesOptions = '<?= /* @noEscape */ '<option value="">Please select</option>' . $googleAttributesSelectOptions ?>';
+        let magentoAttributesOptions = '<?= /* @noEscape */ $magentoAttributesSelectOptions ?>';
+
+        // Function to check if google attribute is already selected
+        function isGoogleAttributeAlreadySelected(currentSelect, googleAttribute) {
+            var isSelected = false;
+            $('#weltpixel_productfeed_contentmappings_table tbody select[name="contentMappings[google_attribute]"]').each(function() {
+                if ($(this).is(currentSelect)) {
+                    return; // skip the current select
+                }
+                if ($(this).val() === googleAttribute) {
+                    isSelected = true;
+                    return false; // break the loop
+                }
+            });
+            return isSelected;
+        }
+
+        // Add event listener for google attribute select change
+        $(document).on('change', 'select[name="contentMappings[google_attribute]"]', function() {
+            var selectedValue = $(this).val();
+            var currentSelect = $(this);
+
+            // Skip check if it's the same select that already had this value
+            if (currentSelect.data('previous-value') === selectedValue) {
+                return;
+            }
+
+            if (isGoogleAttributeAlreadySelected(currentSelect, selectedValue)) {
+                alert('This Google attribute is already mapped. Please select a different attribute.');
+                // Revert to previous value
+                $(this).val($(this).data('previous-value'));
+                return;
+            }
+
+            // Store the new value as previous
+            $(this).data('previous-value', selectedValue);
+            updateHiddenField();
+        });
+
+        // Store initial values
+        $(document).ready(function() {
+            $('select[name="contentMappings[google_attribute]"]').each(function() {
+                $(this).data('previous-value', $(this).val());
+            });
+        });
+
+        // Modify the add button to prevent adding duplicate required attributes
+        document.getElementById('content_mapping_add_btn').addEventListener('click', function() {
+            var table = document.getElementById('weltpixel_productfeed_contentmappings_table');
+            var tbody = table.getElementsByTagName('tbody')[0];
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = '<td><select name="contentMappings[google_attribute]" class="required-entry admin__control-text">'+googleAttributesOptions+'</select></td><td><select name="contentMappings[magento_attribute]" class="required-entry admin__control-text">'+magentoAttributesOptions+'</select></td><td><input type="text" name="contentMappings[own_value]" value="" class="required-entry admin__control-text"></td><td class="col-actions"><button class="action-delete" type="button"><span>Delete</span></button></td>';
+
+            // Initialize the new select with data-previous-value
+            var newSelect = newRow.querySelector('select[name="contentMappings[google_attribute]"]');
+            $(newSelect).data('previous-value', '');
+
+            tbody.appendChild(newRow);
+        });
+
+        // Rest of your existing code...
+        function updateHiddenField() {
+            var table = document.getElementById('weltpixel_productfeed_contentmappings_table');
+            var tbody = table.getElementsByTagName('tbody')[0];
+            var rows = tbody.getElementsByTagName('tr');
+            var data = [];
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var googleAttribute = row.querySelector('select[name="contentMappings[google_attribute]"]').value;
+                var magentoAttribute = row.querySelector('select[name="contentMappings[magento_attribute]"]').value;
+                var ownValue = row.querySelector('input[name="contentMappings[own_value]"]').value;
+
+                data.push({
+                    google_attribute: googleAttribute,
+                    magento_attribute: magentoAttribute,
+                    own_value: ownValue
+                });
+            }
+            $('input[name="content_mappings"]').val(JSON.stringify(data)).trigger('change');
+        }
+
+        // Add event listener using jquery for delete buttons
+        $(document).on('click', '.action-delete', function() {
+            $(this).closest('tr').remove();
+            updateHiddenField();
+        });
+
+        //detect change on select change
+        $(document).on('change', '#weltpixel_productfeed_contentmappings_table select[name="contentMappings[magento_attribute]"]', function() {
+            updateHiddenField();
+        });
+
+        //detect change on table inputs
+        $(document).on('change keyup', '#weltpixel_productfeed_contentmappings_table input', function() {
+            updateHiddenField();
+        });
+
+        $(document).ready(function() {
+            updateHiddenField();
+        });
+    });
+</script>
