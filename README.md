@@ -12,7 +12,7 @@ $ composer config repositories.welpixel-magento2-weltpixel-backend git https://g
 $ composer require weltpixel/magento2-weltpixel-backend:dev-master
 
 $ composer config repositories.welpixel-magento2-weltpixel-product-feed git https://github.com/Weltpixel/magento2-weltpixel-product-feed.git
-$ composer require weltpixel/magento2-weltpixel-product-feed
+$ composer require weltpixel/magento2-weltpixel-product-feed:dev-master
 ```
 
 Manually:
